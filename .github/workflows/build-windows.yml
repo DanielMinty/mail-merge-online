@@ -33,8 +33,8 @@ jobs:
       - name: Put Windows download in repository root
         shell: pwsh
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.name 'DanielMinty'
+          git config user.email '83800353+DanielMinty@users.noreply.github.com'
           git add -f Web-Mail-Merge-Windows-x64.zip
           git commit -m 'Add fresh Windows app download'
           git push origin HEAD:main
