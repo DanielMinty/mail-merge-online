@@ -1,0 +1,31 @@
+# Local accounts, mail content, browser profiles, and build environments.
+.mailmerge_state/
+**/.mailmerge_state/
+.venv/
+**/.venv/
+.local-backup/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.sqlite3
+*.sqlite3-*
+*.db
+*.log
+.env
+.env.*
+.DS_Store
+build/
+dist/
+*.spec
+
+# Recipient lists and exports are private by default. The example is fictional.
+*.csv
+*.tsv
+*.xls
+*.xlsx
+!src/sample_recipients.csv
+
+# Only named release archives are tracked.
+*.zip
+!Web-Mail-Merge-macOS-arm64.zip
+!Web-Mail-Merge-Windows-x64.zip
