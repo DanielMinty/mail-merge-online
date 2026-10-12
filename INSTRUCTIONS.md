@@ -11,7 +11,8 @@ For Outlook, enter your organization's HTTPS webmail address. Gmail uses
 `https://mail.google.com/mail/u/0/#inbox`, including Google Workspace accounts.
 The app remembers the address and website separately for each service.
 
-Choose **Chromium** (bundled) or **Google Chrome** (requires Chrome installed).
+Choose **Chromium** (downloaded automatically to your user cache) or
+**Google Chrome** (requires Chrome installed).
 Sign in on the website normally, including MFA.
 
 ## Set up the website once per account

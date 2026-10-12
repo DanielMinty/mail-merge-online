@@ -1,10 +1,27 @@
 """Reuse signed-in browser sessions on a single Playwright-owning thread."""
+import os
 from pathlib import Path
 import queue
 import subprocess
+import sys
 import threading
 
 from merge_core import MergeError
+
+
+def configure_browser_cache():
+    # Playwright defaults frozen apps to a browser inside the package, but our
+    # downloads intentionally exclude browser binaries. Choose its normal user
+    # cache before starting the driver so launching and installing agree.
+    if not getattr(sys, "frozen", False) or os.environ.get("PLAYWRIGHT_BROWSERS_PATH"):
+        return
+    if sys.platform == "darwin":
+        cache = Path.home() / "Library" / "Caches"
+    elif sys.platform == "win32":
+        cache = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+    else:
+        cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(cache / "ms-playwright")
 
 
 class BrowserSessions:
@@ -24,6 +41,7 @@ class BrowserSessions:
                 return context, False
             self.contexts.pop(key, None)
         if self.playwright is None:
+            configure_browser_cache()
             from playwright.sync_api import sync_playwright
             self.playwright = sync_playwright().start()
         try:
@@ -37,11 +55,11 @@ class BrowserSessions:
                 raise
             # A packaged app installs its browser to Playwright's per-user cache
             # on first use. The binary and account profile never enter the app.
-            from playwright._impl._driver import compute_driver_executable
+            from playwright._impl._driver import compute_driver_executable, get_driver_env
             node, cli = compute_driver_executable()
             try:
                 subprocess.run([node, cli, "install", "chromium"], check=True,
-                               capture_output=True, text=True, timeout=600)
+                               env=get_driver_env(), capture_output=True, text=True, timeout=600)
                 context = self.playwright.chromium.launch_persistent_context(
                     str(Path(state_dir) / "browser"), channel=None, headless=self.headless,
                     viewport={"width": 1280, "height": 850})
